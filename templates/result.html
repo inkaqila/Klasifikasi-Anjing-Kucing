@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Hasil Prediksi</h1>
+
+        <div class="uploaded-image">
+            <h3>Gambar yang di-upload</h3>
+            <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Uploaded Image" class="preview-img">
+        </div>
+
+        <div class="result-text">
+            <h2>Prediksi: <span class="highlight">{{ prediction }}</span></h2>
+        </div>
+
+        <div class="chart-section">
+            <h3>Probabilitas Prediksi</h3>
+            <canvas id="barChart" width="400" height="300"></canvas>
+        </div>
+
+        <div class="confusion-section">
+            <h3>Confusion Matrix</h3>
+            <img src="data:image/png;base64,{{ confusion_image }}" class="confusion-img" />
+        </div>
+
+        <a href="/" class="btn-back">Prediksi Ulang</a>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ probabilities.keys()|list|tojson }},
+                datasets: [{
+                    label: 'Probability',
+                    data: {{ probabilities.values()|list|tojson }},
+                    backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 1 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
